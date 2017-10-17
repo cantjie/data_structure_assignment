@@ -1,12 +1,19 @@
 #include "header.h"
-#include<stdio.h>
-#include<wchar.h>
-//#include<string.h>
-#include <locale.h>
+
+//#include <locale.h>
+
 int main() {
-	setlocale(LC_ALL, "chs");
-	wchar_t str[] = L"cantjie中文中文";
-	printf("%ls\n", str);
-	wchar_t wc = L'中';
-	printf("%lc\n", wc);
+	linkHead *head;
+	head = create_link();
+
+	FILE *fp;
+	fp = fopen(FILE_NAME, "r");
+	char ch;
+	while ((ch = fgetc(fp)) != EOF)
+	{
+		printf("%c", ch);
+		if (!append(head, ch)) {
+			printf("失败！");
+		}
+	}
 }
