@@ -21,7 +21,9 @@ linkHead* count(FILE* fp) {
 		//判断是否重复
 		while (data = foreach(head)) {
 			//如果两字符串相等，说明重复了，则频数+1
-			if (0 == strcmp(data->ch, ch)) {
+			//注意这里不能用strcmp，strcmp会比较直到'\0'
+			//if (0 == strcmp(data->ch, ch)) {
+			if (0 == memcmp(data->ch,ch,2)) {
 				data->cnt++;
 				duplicate_tag = true;
 				head->traverseTag = false;
