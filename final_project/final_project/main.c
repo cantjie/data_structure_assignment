@@ -1,19 +1,28 @@
 #include "header.h"
 
-//#include <locale.h>
+void print_data(linkHead *head) {
+	linkData *data;
+	printf("×Ö·û\tÆµÊý\tÆµÂÊ\t\n");
+	while (data = foreach(head)) {
+		if (data->ch[0] < 0) {
+			printf("%c%c\t", data->ch[0], data->ch[1]);
+		}
+		else
+		{
+			printf("%c\t", data->ch[0]);
+		}
+		printf("%d\t%lf\t\n", data->cnt, data->freq);
+	}
+}
 
 int main() {
 	linkHead *head;
-	head = create_link();
-
 	FILE *fp;
+	linkData *data;
+	linkNode *p;
+
 	fp = fopen(FILE_NAME, "r");
-	char ch;
-	while ((ch = fgetc(fp)) != EOF)
-	{
-		printf("%c", ch);
-		if (!append(head, ch)) {
-			printf("Ê§°Ü£¡");
-		}
-	}
+	head = count(fp);
+	print_data(head);
+
 }
