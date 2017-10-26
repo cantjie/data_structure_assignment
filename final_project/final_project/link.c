@@ -19,7 +19,8 @@ linkNode* append(linkHead *head, char ch[]){
 	head->length++;
 
 	p->next = NULL;  //初始化该节点信息
-	strcpy(p->data.ch, ch);
+	memcpy(p->data.ch, ch, 2);
+	//strcpy(p->data.ch, ch);
 	p->data.cnt = 0;
 	p->data.freq = 0;
 

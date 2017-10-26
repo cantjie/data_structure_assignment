@@ -7,7 +7,6 @@
 #include<stdio.h>
 #include<malloc.h>
 #include<stdbool.h>
-#include<string.h>
 
 
 #define FILE_NAME "test.txt"
@@ -21,8 +20,8 @@ typedef struct linkData
 {
 	//这里要考虑如何储存汉字、特殊字符等,为了避免汉字造成内存溢出，这里设计成一个ch[2]
 	char ch[2];
-	int cnt;
-	double freq;
+	int cnt;		//频数
+	double freq;	// 频率
 }linkData;
 
 //链表节点的定义、单向链表
@@ -64,7 +63,7 @@ linkData* foreach(linkHead *head);
 //count.c
 
 //用来统计频率，返回一个链表头
-linkHead* count(FILE* fp);
+linkHead* count_from_file(FILE* fp);
 
 
 //main.c

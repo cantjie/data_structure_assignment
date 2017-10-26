@@ -1,6 +1,6 @@
 #include "header.h"
 
-linkHead* count(FILE* fp) {
+linkHead* count_from_file(FILE* fp) {
 	linkHead *head;
 	linkData *data;
 	bool duplicate_tag;  //在判断重复的时候用
@@ -50,4 +50,8 @@ linkHead* count(FILE* fp) {
 	}
 
 	return head;
+}
+
+void sort_link(linkHead* head) {
+
 }
