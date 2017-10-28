@@ -5,11 +5,8 @@
 
 //在这里引用标准头文件
 #include<stdio.h>
-#include<malloc.h>
+#include<stdlib.h>
 #include<stdbool.h>
-
-
-#define FILE_NAME "test.txt"
 
 #endif
 
@@ -54,8 +51,8 @@ linkHead* create_link(void);
 //参数head为目标链表的头结点，参数ch为要插入的字符变量。
 linkNode* append(linkHead *head,char ch[]);
 
-//循环链表每一个节点，返回节点的data指针
-//循环完毕或长度为空时返回NULL
+//循环链表每一个节点，返回节点的data指针,循环完毕或长度为空时返回NULL
+//注意如果在foreach的过程中break了，需要将head->traverseTag置为假
 //参数head为目标链表的头结点。
 linkData* foreach(linkHead *head);
 
@@ -63,11 +60,18 @@ linkData* foreach(linkHead *head);
 //count.c
 
 //用来统计频率，返回一个链表头
-linkHead* count_from_file(FILE* fp);
+//@param filename string 文件名
+//@return linkHead* 链表头
+linkHead* count_from_file(char filename[]);
 
 
-//main.c
+//output.c
 
 //美观的输出频率频度
-//参数head为目标头结点指针
+//@param linkHead* head目标链表的头结点
 void print_data(linkHead *head);
+
+//将统计结果排序。
+//@param linkHead* head 目标链表头节点
+//@param bool mode true表示增序，false表示降序
+void sort_link(linkHead* head, bool mode);

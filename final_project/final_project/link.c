@@ -1,12 +1,12 @@
 #include "header.h"
 
-linkNode* append(linkHead *head, char ch[]){
+linkNode* append(linkHead *head, char ch[]) {
 	linkNode* p;
 	p = (linkNode*)malloc(sizeof(linkNode));
 	if (NULL == p) {
 		return NULL;
 	}
-	
+
 	if (head->tail) {  //原先的最后一个节点指向新节点
 		head->tail->next = p;
 	}
@@ -54,11 +54,11 @@ linkData* foreach(linkHead *head) {
 			head->curr = head->next;
 			return NULL;
 		}
-		p = &(head->curr->data);	
+		p = &(head->curr->data);
 		head->curr = head->curr->next;
 		return p;
 	}
-	else{
+	else {
 		head->traverseTag = true;
 		head->curr = head->next;
 		return foreach(head);
