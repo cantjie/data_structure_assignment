@@ -1,21 +1,9 @@
 #include "header.h"
 
-//返回该链表的中间节点，如果是偶数个节点，返回中间偏左的节点
-//@param linkNode p 该链表第一个非头节点。
-//@return linkNode
 linkNode* getMiddle(linkNode* p);
 
-//合并两个排序好的链表，返回合并后的链表的第一个节点
-//@param linkNode p1
-//@param linkNode p2
-//@param bool mode true表示增序，false表示降序
-//@return linkNode*
 linkNode* mergeLink(linkNode* p1, linkNode* p2, bool mode);
 
-//归并排序，返回排序好的链表的第一个节点
-//@param linkNode p 链表第一个非头节点
-//@param bool mode true表示增序，false表示降序
-//@return linkNode* 
 linkNode* sortLink(linkNode* p, bool mode);
 
 linkHead* count_from_file(char filename[]) {
@@ -76,8 +64,15 @@ linkHead* count_from_file(char filename[]) {
 
 void sort_link(linkHead* head, bool mode) {
 	head->next = sortLink(head->next, mode);
+	while (head->tail->next)
+	{
+		head->tail = head->tail->next;
+	}
 }
 
+//返回该链表的中间结点，如果是偶数个结点，返回中间偏左的结点
+//@param linkNode p 该链表第一个非头结点。
+//@return linkNode
 linkNode* getMiddle(linkNode* p) {
 	if (!(p && p->next)) return p;
 
@@ -94,6 +89,11 @@ linkNode* getMiddle(linkNode* p) {
 	return slow;
 }
 
+//合并两个排序好的链表，返回合并后的链表的第一个结点
+//@param linkNode p1
+//@param linkNode p2
+//@param bool mode true表示增序，false表示降序
+//@return linkNode*
 linkNode* mergeLink(linkNode * p1, linkNode * p2, bool mode)
 {
 	if (NULL == p1) return p2;
@@ -102,7 +102,8 @@ linkNode* mergeLink(linkNode * p1, linkNode * p2, bool mode)
 	linkNode* p;
 	linkNode* head;
 
-	// 这里用两层判断写也可以，但看着太乱了。现在这样做的缺点是不具有稳定性，但该工程对排序稳定性无要求
+	// 这里用两层判断写也可以，但看着太乱了。
+	//现在这样做的缺点是不具有稳定性，但该工程对排序稳定性无要求
 	if (p1->data.cnt < p2->data.cnt) {
 		head = mode ? p1 : p2; 
 		mode ? (p1 = p1->next) : (p2 = p2->next);
@@ -137,9 +138,13 @@ linkNode* mergeLink(linkNode * p1, linkNode * p2, bool mode)
 	return head;
 }
 
+//归并排序，返回排序好的链表的第一个结点
+//@param linkNode p 链表第一个非头结点
+//@param bool mode true表示增序，false表示降序
+//@return linkNode* 
 linkNode* sortLink(linkNode * p, bool mode)
 {
-	if (!(p && p->next)) return p;  // 返回空或者这个唯一的节点
+	if (!(p && p->next)) return p;  // 返回空或者这个唯一的结点
 
 	linkNode* middle = getMiddle(p);
 	linkNode* latter_part;

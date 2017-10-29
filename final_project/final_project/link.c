@@ -7,7 +7,7 @@ linkNode* append(linkHead *head, char ch[]) {
 		return NULL;
 	}
 
-	if (head->tail) {  //原先的最后一个节点指向新节点
+	if (head->tail) {  //原先的最后一个结点指向新结点
 		head->tail->next = p;
 	}
 	else
@@ -18,13 +18,13 @@ linkNode* append(linkHead *head, char ch[]) {
 	head->tail = p;  //更改头部信息
 	head->length++;
 
-	p->next = NULL;  //初始化该节点信息
+	p->next = NULL;  //初始化该结点信息
 	memcpy(p->data.ch, ch, 2);
 	//strcpy(p->data.ch, ch);
 	p->data.cnt = 0;
 	p->data.freq = 0;
 
-	return p;  //成功则返回该节点指针
+	return p;  //成功则返回该结点指针
 }
 
 linkHead* create_link(void) {
