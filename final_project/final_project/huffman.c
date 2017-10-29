@@ -7,7 +7,7 @@ typedef struct forestNode
 	struct forestNode* next;
 }forestNode;
 
-forestNode* preBuildTree(linkHead* head);
+forestNode* preBuildTree(listHead* head);
 
 huffmanNode* createHuffmanNode(forestNode* p1, forestNode* p2);
 
@@ -17,7 +17,7 @@ void deleteLastTwoForestNode(forestNode* prev, forestNode* p1);
 
 forestNode* insertForestNode(forestNode* head, forestNode* p);
 
-huffmanNode* build_tree(linkHead* head) {
+huffmanNode* build_tree(listHead* head) {
 	if (NULL == head->next || NULL == head->next->next) {
 		printf("该文件仅有一种字符或没有字符，拒绝建立哈夫曼编码\n");
 		exit(0);
@@ -123,19 +123,19 @@ huffmanNode* createHuffmanNode(forestNode * p1, forestNode * p2)
 		printf("建立哈夫曼过程中分配临时内存失败");
 		exit(0);
 	}
-	p_huffman->lChild = p2->pNode;
-	p_huffman->rChild = p1->pNode;
+	p_huffman->lChild = p1->pNode;
+	p_huffman->rChild = p2->pNode;
 	//p_huffman->leafTag = false;
 	p_huffman->val = p1->pNode->val + p2->pNode->val;
 	return p_huffman;
 }
 
-//将原链表的linkNode结点变成huffmanNode构成的森林的
-//@param linkNode* head
+//将原链表的listNode结点变成huffmanNode构成的森林的
+//@param listNode* head
 //@return forestNode* 
-forestNode* preBuildTree(linkHead * head)
+forestNode* preBuildTree(listHead * head)
 {
-	linkNode *p = head->next;
+	listNode *p = head->next;
 	forestNode *p_forest_head;
 	forestNode *p_forest;
 	huffmanNode *p_huffman;

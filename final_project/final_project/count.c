@@ -1,21 +1,21 @@
 #include "header.h"
 
-linkNode* getMiddle(linkNode* p);
+listNode* getMiddle(listNode* p);
 
-linkNode* mergeLink(linkNode* p1, linkNode* p2, bool mode);
+listNode* mergelist(listNode* p1, listNode* p2, bool mode);
 
-linkNode* sortLink(linkNode* p, bool mode);
+listNode* sortlist(listNode* p, bool mode);
 
-linkHead* count_from_file(char filename[]) {
-	linkHead *head;
-	linkData *data;
+listHead* count_from_file(char filename[]) {
+	listHead *head;
+	listData *data;
 	FILE *fp;
 	bool duplicate_tag;  //在判断重复的时候用
 	char ch[2];
-	linkNode *p;
+	listNode *p;
 
 	fp = fopen(filename, "r");
-	head = create_link();
+	head = create_list();
 	while ((*ch = fgetc(fp)) != EOF)
 	{
 		//ch[0]<0就说明是汉字，就再读取一个字符。
@@ -39,9 +39,9 @@ linkHead* count_from_file(char filename[]) {
 				break;
 			}
 		}
-		//如果这个字符之前还没有出现过，就append
+		//如果这个字符之前还没有出现过，就append_list
 		if (!duplicate_tag) {
-			if (!(p = append(head, ch))) {
+			if (!(p = append_list(head, ch))) {
 				//如果失败就提示并退出程序
 				printf("统计过程出现错误，请重新运行");
 				exit(0);
@@ -62,8 +62,8 @@ linkHead* count_from_file(char filename[]) {
 	return head;
 }
 
-void sort_link(linkHead* head, bool mode) {
-	head->next = sortLink(head->next, mode);
+void sort_list(listHead* head, bool mode) {
+	head->next = sortlist(head->next, mode);
 	while (head->tail->next)
 	{
 		head->tail = head->tail->next;
@@ -71,13 +71,13 @@ void sort_link(linkHead* head, bool mode) {
 }
 
 //返回该链表的中间结点，如果是偶数个结点，返回中间偏左的结点
-//@param linkNode p 该链表第一个非头结点。
-//@return linkNode
-linkNode* getMiddle(linkNode* p) {
+//@param listNode p 该链表第一个非头结点。
+//@return listNode
+listNode* getMiddle(listNode* p) {
 	if (!(p && p->next)) return p;
 
-	linkNode *fast;
-	linkNode *slow;
+	listNode *fast;
+	listNode *slow;
 	slow = p;
 	fast = p->next;
 
@@ -90,17 +90,17 @@ linkNode* getMiddle(linkNode* p) {
 }
 
 //合并两个排序好的链表，返回合并后的链表的第一个结点
-//@param linkNode p1
-//@param linkNode p2
+//@param listNode p1
+//@param listNode p2
 //@param bool mode true表示增序，false表示降序
-//@return linkNode*
-linkNode* mergeLink(linkNode * p1, linkNode * p2, bool mode)
+//@return listNode*
+listNode* mergelist(listNode * p1, listNode * p2, bool mode)
 {
 	if (NULL == p1) return p2;
 	if (NULL == p2) return p1;
 
-	linkNode* p;
-	linkNode* head;
+	listNode* p;
+	listNode* head;
 
 	// 这里用两层判断写也可以，但看着太乱了。
 	//现在这样做的缺点是不具有稳定性，但该工程对排序稳定性无要求
@@ -139,18 +139,18 @@ linkNode* mergeLink(linkNode * p1, linkNode * p2, bool mode)
 }
 
 //归并排序，返回排序好的链表的第一个结点
-//@param linkNode p 链表第一个非头结点
+//@param listNode p 链表第一个非头结点
 //@param bool mode true表示增序，false表示降序
-//@return linkNode* 
-linkNode* sortLink(linkNode * p, bool mode)
+//@return listNode* 
+listNode* sortlist(listNode * p, bool mode)
 {
 	if (!(p && p->next)) return p;  // 返回空或者这个唯一的结点
 
-	linkNode* middle = getMiddle(p);
-	linkNode* latter_part;
+	listNode* middle = getMiddle(p);
+	listNode* latter_part;
 	if (middle) {
 		latter_part = middle->next;
 		middle->next = NULL;
 	}
-	return mergeLink(sortLink(p, mode), sortLink(latter_part, mode), mode);
+	return mergelist(sortlist(p, mode), sortlist(latter_part, mode), mode);
 }
