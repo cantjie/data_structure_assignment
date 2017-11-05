@@ -56,6 +56,13 @@ huffmanNode* build_tree(listHead* head) {
 	return p_forest_head->pNode;
 }
 
+int get_one_code(char ch[])
+{
+	int tail = -1;
+	//TODO
+		
+}
+
 //向head指向的这个森林中插入一个p指针指向的节点,降序
 //@param forestNode* head
 //@param forestNode* p

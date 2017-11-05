@@ -49,11 +49,14 @@ typedef struct huffmanNode
 	struct huffmanNode *rChild;
 }huffmanNode;
 
+//临时储存代码的数组
+unsigned char G_code_array[250];
+
 //函数声明部分
 
 //list.c
 
-//创建一个新的链表，返回链表头
+//创建一个新的空链表，返回链表头
 listHead* create_list(void);
 
 //向链表末尾增加一个结点，返回1表示成功，0表示未成功
@@ -96,3 +99,8 @@ void print_huffman_tree(huffmanNode* head);
 //@param listHead* head
 //@return huffmanNode* 返回树根结点指针
 huffmanNode* build_tree(listHead* head);
+
+//给一个字符，得到该字符对应编码数组的前几位。
+//@param char ch[]
+//@return int 
+int get_one_code(char ch[]);

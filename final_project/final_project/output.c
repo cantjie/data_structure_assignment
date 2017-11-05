@@ -38,20 +38,32 @@ void print_data(listHead *head) {
 }
 
 void print_huffman_tree(huffmanNode* head) {
-	//TODO
+	//  这里的命名实在有点糟糕
 	queueHead* queue_head;
-	queue* pQueue;
+	queue* p_queue;
+	huffmanNode sep_node, *p_sep_node;  //层次separator
+	sep_node.lChild = sep_node.rChild = NULL;
+	p_sep_node = &sep_node;
 	queue_head = createQueue();
 	appendQueue(queue_head, head);
-	pQueue = popQueue(queue_head);
-	while (pQueue)
+	appendQueue(queue_head, p_sep_node);
+	p_queue = popQueue(queue_head);
+	while (p_queue)
 	{
-		printf("%d\t", pQueue->pNode->val);
-		if (NULL != pQueue->pNode->lChild && NULL != pQueue->pNode->rChild) {
-			appendQueue(queue_head, pQueue->pNode->lChild);
-			appendQueue(queue_head, pQueue->pNode->rChild);
+		if (p_queue->pNode == p_sep_node) {
+			if(queue_head->next && queue_head->next->next){
+				appendQueue(queue_head, p_sep_node);
+			}
+			p_queue = popQueue(queue_head);
+			printf("\n");
+			continue;
 		}
-		pQueue = popQueue(queue_head);
+		printf("%3d ", p_queue->pNode->val);
+		if (NULL != p_queue->pNode->lChild && NULL != p_queue->pNode->rChild) {
+			appendQueue(queue_head, p_queue->pNode->lChild);
+			appendQueue(queue_head, p_queue->pNode->rChild);
+		}
+		p_queue = popQueue(queue_head);
 	}
 }
 

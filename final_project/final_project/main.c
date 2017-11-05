@@ -8,9 +8,14 @@ int main(int argc, char *argv[]) {
 
 	sort_list(list_head, 0);
 
-	print_data(list_head);
+	//print_data(list_head);
 
-	huffman_head = build_tree(list_head);
+	//huffman_head = build_tree(list_head);
 
 	//print_huffman_tree(huffman_head);
+
+	
+
 }
+
+
