@@ -3,6 +3,8 @@
 
 #define HEADER_H
 
+#define MAX_CODE_LEN 250
+
 //在这里引用标准头文件
 #include<stdio.h>
 #include <string.h>  //memcpy
@@ -50,7 +52,7 @@ typedef struct huffmanNode
 }huffmanNode;
 
 //临时储存代码的数组
-unsigned char G_code_array[250];
+unsigned char G_code_array[MAX_CODE_LEN];
 
 //函数声明部分
 
@@ -101,6 +103,7 @@ void print_huffman_tree(huffmanNode* head);
 huffmanNode* build_tree(listHead* head);
 
 //给一个字符，得到该字符对应编码数组的前几位。
-//@param char ch[]
-//@return int 
-int get_one_code(char ch[]);
+//@param huffmanNode* huffman_head 根节点
+//@param char ch[] char的长度固定为2
+//@return int 返回该编码长度。
+int get_char_code(huffmanNode* huffman_head, char ch[]);
