@@ -13,15 +13,12 @@ typedef struct stackNode {
 	struct stackNode *next;
 } treeStackNode;
 
-//栈的头结点。
-typedef struct stackHead
-{
-	struct stackNode *next;
-	struct stackNode *tail;
-} treeStackHead;
+typedef struct stackHead {
+	treeStackNode *next;
+}treeStackHead;
 
-//用来辅助做二进制运算
-unsigned char bi_array[8] = { 1,128,64,32,16,8,4,2 };
+//用来辅助做二进制运算 in output.c
+extern unsigned char bi_array[8] ;
 
 forestNode* preBuildTree(listHead* head);
 huffmanNode* createHuffmanNode(forestNode* p1, forestNode* p2);
@@ -30,8 +27,7 @@ void deleteLastTwoForestNode(forestNode* prev, forestNode* p1);
 forestNode* insertForestNode(forestNode* head, forestNode* p);
 void pushStack(treeStackHead* stack_head, huffmanNode* p);
 treeStackHead* createStack(void);
-treeStackNode* popStack(treeStackHead* stack_head);
-void deleteStack(treeStackHead* stack_head);
+treeStackNode popStack(treeStackHead* stack_head);
 
 huffmanNode* build_tree(listHead* head) {
 	if (NULL == head->next || NULL == head->next->next) {
@@ -74,12 +70,11 @@ huffmanNode* build_tree(listHead* head) {
 
 int get_char_code(huffmanNode* huffman_head, char ch[]) {
 	treeStackHead* stack_head;
-	treeStackNode* stack_node;
+	treeStackNode stack_node;
 	huffmanNode* curr;
 	listNode* p_list_node;
 	unsigned char ch_temp;
 	int len = 0;  //编码长度（二进制位数）
-	int i, j;
 	stack_head = createStack();
 	curr = huffman_head;
 	while (curr) {
@@ -95,17 +90,23 @@ int get_char_code(huffmanNode* huffman_head, char ch[]) {
 					len--;
 				}
 				//现在最后一位是0,接下来弹出一个。
-				curr = popStack(stack_head)->p;
+				stack_node = popStack(stack_head);
+				if (stack_node.p) {
+					curr = stack_node.p;
+				}
+				else {
+					return 0;  //说明没找到
+				}
 				len++;
-				G_code_array[(len - 1) % 8] = G_code_array[(len - 1) / 8] | bi_array[len % 8];
+				G_code_array[(len - 1) / 8] = G_code_array[(len - 1) / 8] | bi_array[len % 8];
 			}
 		}
 		else {  //如果curr不是指向叶子结点。
 			pushStack(stack_head, curr->rChild);
 			curr = curr->lChild;
 			len++;
-			//把最后一位赋1
-			G_code_array[(len - 1) % 8] = G_code_array[(len - 1) / 8] | bi_array[len % 8];
+			//把最后一位赋0
+			G_code_array[(len - 1) / 8] = G_code_array[(len - 1) / 8] & ~bi_array[len % 8];
 		}
 	} //end while
 	return 0;
@@ -223,27 +224,20 @@ forestNode* preBuildTree(listHead * head)
 	return p_forest_head;
 }
 
+
 //将一个HuffmanNode压如栈尾
 //@param treeStackHead* stack_head 栈的头指针。
-//@param huffmanNode* p 要压如的Huffman节点的指针
-void pushStack(treeStackHead* stack_head, huffmanNode* p) {
+//@param huffmanNode* p_huffman_node 要压如的Huffman节点的指针
+void pushStack(treeStackHead* stack_head, huffmanNode* p_huffman_node) {
 	treeStackNode *p_node;
 	p_node = malloc(sizeof(treeStackNode));
 	if (!p_node) {
 		printf("开辟栈空间失败");
 		exit(0);
 	}
-	p_node->p = p;
-	p_node->next = NULL;
-
-	if (NULL == stack_head->next) {  //头空，尾也一定空
-		stack_head->next = p_node;
-		stack_head->tail = p_node;
-		return 0;
-	}
-	else {
-		stack_head->tail->next = p_node;
-	}
+	p_node->p = p_huffman_node;
+	p_node->next = stack_head->next;
+	stack_head->next = p_node;
 }
 
 //创建一个空的栈，即new一个空的栈,
@@ -256,33 +250,21 @@ treeStackHead* createStack(void) {
 		exit(0);
 	}
 	stack_head->next = NULL;
-	stack_head->tail = NULL;
 	return stack_head;
 }
 
-//从栈中弹出一个元素，注意用完之后free掉。
-//这里依然返回指针是为了delete函数的方便。实际上可以直接返回node,这样就可以在此函数内部free
-//@param treeStackHead* stack_head 栈的头结点
-//@return treeStackNode* 
-treeStackNode* popStack(treeStackHead* stack_head) {
+//从栈中弹出一个元素
+treeStackNode popStack(treeStackHead* stack_head) {
+	treeStackNode stack_node;
+	treeStackNode* temp;
 	if (NULL == stack_head->next) {
-		return NULL;
+		stack_node.next = NULL;
+		stack_node.p = NULL;
+		return stack_node;
 	}
-	treeStackNode *p_node;
-	p_node = stack_head->next;
+	temp = stack_head->next;
+	stack_node = *temp;
 	stack_head->next = stack_head->next->next;
-	if (NULL == stack_head->next) {
-		stack_head->tail = NULL;
-	}
-	return p_node;
-}
-
-//删除栈，注意删除之后要避免野指针
-//@param treeStackHead* stack_head 栈的头结点
-void deleteStack(treeStackHead* stack_head) {
-	treeStackNode *p_node;
-	while (p_node = popStack(stack_head)) {
-		free(p_node);
-	}
-	free(stack_head);
+	free(temp);
+	return stack_node;
 }

@@ -1,5 +1,8 @@
 #include "header.h"
 
+//用来辅助做二进制运算
+unsigned char bi_array[8] = { 1,128,64,32,16,8,4,2 };
+
 typedef struct FIFO_queue {
 	huffmanNode* pNode;
 	struct FIFO_queue* next;
@@ -51,7 +54,7 @@ void print_huffman_tree(huffmanNode* head) {
 	while (p_queue)
 	{
 		if (p_queue->pNode == p_sep_node) {
-			if(queue_head->next && queue_head->next->next){
+			if (queue_head->next && queue_head->next->next) {
 				appendQueue(queue_head, p_sep_node);
 			}
 			p_queue = popQueue(queue_head);
@@ -64,6 +67,59 @@ void print_huffman_tree(huffmanNode* head) {
 			appendQueue(queue_head, p_queue->pNode->rChild);
 		}
 		p_queue = popQueue(queue_head);
+	}
+}
+
+void code_bi_to_dec(int len, bool * code)
+{
+	int i = 0;
+	for (i = 0; i < len; i++) {
+		code[i] = bi_array[(i + 1) % 8] & G_code_array[(i - 1) / 8];
+	}
+}
+
+void print_one_char_code(huffmanNode *huffman_head, char ch[]) {
+	bool code[MAX_CODE_LEN * 8];
+	int len;
+	int i;
+	len = get_char_code(huffman_head, ch);
+	code_bi_to_dec(len, code);
+	printf("%c%c编码有%d位:", ch[0], ch[1], len);
+	for (i = 0; i < len; i++) {
+		printf("%d", code[i]);
+	}
+	printf("\n");
+}
+
+void print_codebook(huffmanNode * huffman_head, listHead *list_head)
+{
+	bool code[MAX_CODE_LEN * 8];
+	int len;
+	int i;
+	listNode *list_node;
+	list_node = list_head->next;
+	printf("字符\t\t位数\t编码\n");
+	while (list_node) {
+		len = get_char_code(huffman_head, list_node->data.ch);
+		code_bi_to_dec(len, code);
+		if (list_node->data.ch[0] < 0) {
+			printf("%c%c\t\t", list_node->data.ch[0], list_node->data.ch[1]);
+		}
+		else {
+			if ((list_node->data.ch[0] <= 31 && list_node->data.ch[0] >= 0) || 127 == list_node->data.ch[0]) {
+				printf("(ASCII:%d)\t", list_node->data.ch[0]);
+			}
+			else {
+				printf("%c(ASCII:%d)\t", list_node->data.ch[0], list_node->data.ch[0]);
+			}
+
+		}
+		printf("%d\t:", len);
+		for (i = 0; i < len; i++) {
+			printf("%d", code[i]);
+		}
+		printf("\n");
+		list_node = list_node->next;
 	}
 }
 

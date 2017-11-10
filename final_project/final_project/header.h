@@ -54,6 +54,7 @@ typedef struct huffmanNode
 //临时储存代码的数组
 unsigned char G_code_array[MAX_CODE_LEN];
 
+
 //函数声明部分
 
 //list.c
@@ -94,6 +95,18 @@ void print_data(listHead *head);
 //@param huffmanNode* head目标哈夫曼树的根节点
 void print_huffman_tree(huffmanNode* head);
 
+//将二进制的码流转换成十进制方便输出码本的编码
+//@param int len 二进制码流的位数
+//@param char *code 用来储存转换后的十进制0、1的数组
+void code_bi_to_dec(int len, bool *code);
+
+//输出一个字符的编码
+//@param huffmanNode *huffman_head 
+//@param char ch[]，字符长度为2
+void print_one_char_code(huffmanNode *huffman_head, char ch[]);
+
+void print_codebook(huffmanNode *huffman_head,listHead *list_head);
+
 
 //huffman.c
 
@@ -107,3 +120,4 @@ huffmanNode* build_tree(listHead* head);
 //@param char ch[] char的长度固定为2
 //@return int 返回该编码长度。
 int get_char_code(huffmanNode* huffman_head, char ch[]);
+

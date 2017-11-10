@@ -2,7 +2,11 @@
 
 int main(int argc, char *argv[]) {
 	listHead *list_head;
+	listNode *list_node;
 	huffmanNode *huffman_head;
+	int len; //当前编码长度（位数）
+	bool code[2000];  //用来储存十进制的0、1
+	int i, j, k;
 
 	list_head = count_from_file("test.txt");
 
@@ -12,16 +16,11 @@ int main(int argc, char *argv[]) {
 
 	huffman_head = build_tree(list_head);
 
-	print_huffman_tree(huffman_head);
+	//print_huffman_tree(huffman_head);
 
-	//unsigned char bi_array[9] = { 0,1,2,4,8,16,32,64,128 };
-	//unsigned char a;
-	//a = 'c';//0110 0011
-	//printf("%d", (bi_array[6] & a)>>5);
-	char a[2];
-	a[0] = 'a';
-	a[1] = '\n';
-	get_char_code(huffman_head,a);
+	//print_one_char_code(huffman_head, "残");
+
+	print_codebook(huffman_head, list_head);
 	return 0;
 }
 
