@@ -18,7 +18,7 @@ typedef struct stackHead {
 }treeStackHead;
 
 //用来辅助做二进制运算 in output.c
-extern unsigned char bi_array[8] ;
+extern unsigned char bi_array[8];
 
 forestNode* preBuildTree(listHead* head);
 huffmanNode* createHuffmanNode(forestNode* p1, forestNode* p2);
@@ -68,7 +68,7 @@ huffmanNode* build_tree(listHead* head) {
 	return p_forest_head->pNode;
 }
 
-int get_char_code(huffmanNode* huffman_head, char ch[]) {
+int get_char_code_len(huffmanNode* huffman_head, char ch[]) {
 	treeStackHead* stack_head;
 	treeStackNode stack_node;
 	huffmanNode* curr;
@@ -109,6 +109,7 @@ int get_char_code(huffmanNode* huffman_head, char ch[]) {
 			G_code_array[(len - 1) / 8] = G_code_array[(len - 1) / 8] & ~bi_array[len % 8];
 		}
 	} //end while
+	free(stack_head);
 	return 0;
 }
 

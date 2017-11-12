@@ -82,7 +82,7 @@ void print_one_char_code(huffmanNode *huffman_head, char ch[]) {
 	bool code[MAX_CODE_LEN * 8];
 	int len;
 	int i;
-	len = get_char_code(huffman_head, ch);
+	len = get_char_code_len(huffman_head, ch);
 	code_bi_to_dec(len, code);
 	printf("%c%c编码有%d位:", ch[0], ch[1], len);
 	for (i = 0; i < len; i++) {
@@ -100,7 +100,7 @@ void print_codebook(huffmanNode * huffman_head, listHead *list_head)
 	list_node = list_head->next;
 	printf("字符\t\t位数\t编码\n");
 	while (list_node) {
-		len = get_char_code(huffman_head, list_node->data.ch);
+		len = get_char_code_len(huffman_head, list_node->data.ch);
 		code_bi_to_dec(len, code);
 		if (list_node->data.ch[0] < 0) {
 			printf("%c%c\t\t", list_node->data.ch[0], list_node->data.ch[1]);
@@ -121,6 +121,67 @@ void print_codebook(huffmanNode * huffman_head, listHead *list_head)
 		printf("\n");
 		list_node = list_node->next;
 	}
+}
+
+void file_put_stream(huffmanNode *huffman_head, char output_filename[], char input_filename[]) {
+	//TODO
+	//一定要检查一下文件名的合法性
+	FILE *fp_in, *fp_out;
+	char ch[2];
+	int len = 0;
+	char res_arr[MAX_CODE_LEN];
+	char temp_ch = 1;
+	int res_len = 0;
+	int i;
+	fp_in = fopen(input_filename, "r");
+	fp_out = fopen(output_filename, "wb");
+	if (NULL == fp_out || NULL == fp_in) {
+		printf("文件打开失败");
+		return 0;
+	}
+	//读取文件
+	while ((*ch = fgetc(fp_in)) != EOF) {
+		if (ch[0] < 0) {
+			ch[1] = fgetc(fp_in);
+		}
+		else {
+			ch[1] = '\0';
+		}
+		len = get_char_code_len(huffman_head, ch);
+
+		//@link https://stackoverflow.com/questions/10367616/bitwise-shifting-array-of-chars
+		//数无法整体移动，也只能分单元按字节移动，没有找到其他更好算法，目前时间复杂度O(n)；
+		for (i = 1; i <= len; i++) {
+			temp_ch = G_code_array[(i - 1) / 8] & bi_array[i % 8];
+			if (temp_ch) {
+				//赋1
+				res_arr[res_len / 8] = res_arr[res_len / 8] | bi_array[(res_len + 1) % 8];
+			}
+			else {
+				//赋0
+				res_arr[res_len / 8] = res_arr[res_len / 8] & ~bi_array[(res_len + 1) % 8];
+			}
+			res_len++;
+		}
+		fwrite(res_arr, res_len / 8, 1, fp_out);
+		res_arr[0] = res_arr[res_len / 8];
+		res_len = res_len % 8;
+	}
+	//循环结束之后还需要把最后加一个结束符
+	len = get_char_code_len(huffman_head, "\0\0");
+	for (i = 1; i <= len; i++) {
+		temp_ch = G_code_array[(i - 1) / 8] & bi_array[i % 8];
+		if (temp_ch) {
+			res_arr[res_len / 8] = res_arr[res_len / 8] | bi_array[(res_len + 1) % 8];
+		}
+		else {
+			res_arr[res_len / 8] = res_arr[res_len / 8] & ~bi_array[(res_len + 1) % 8];
+		}
+		res_len++;
+	}
+	fwrite(res_arr, (res_len - 1) / 8 + 1, 1, fp_out);
+	fclose(fp_in);
+	fclose(fp_out);
 }
 
 //从FIFO队列中弹出一个元素

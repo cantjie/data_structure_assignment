@@ -3,7 +3,7 @@
 
 #define HEADER_H
 
-#define MAX_CODE_LEN 250
+#define MAX_CODE_LEN 30
 
 //在这里引用标准头文件
 #include<stdio.h>
@@ -105,7 +105,16 @@ void code_bi_to_dec(int len, bool *code);
 //@param char ch[]，字符长度为2
 void print_one_char_code(huffmanNode *huffman_head, char ch[]);
 
-void print_codebook(huffmanNode *huffman_head,listHead *list_head);
+//打印码本
+//@param huffmanNode *huffman_head
+//@param listHead *list_head
+void print_codebook(huffmanNode *huffman_head, listHead *list_head);
+
+//得到二进制码流并且将码流输出到文件中去。
+//@param huffmanNode *huffman_head
+//@param char output_filename[] 要存的文件名;
+//@param char input_filename[] 要压缩的文件
+void file_put_stream(huffmanNode *huffman_head, char output_filename[], char input_filename[]);
 
 
 //huffman.c
@@ -119,5 +128,5 @@ huffmanNode* build_tree(listHead* head);
 //@param huffmanNode* huffman_head 根节点
 //@param char ch[] char的长度固定为2
 //@return int 返回该编码长度。
-int get_char_code(huffmanNode* huffman_head, char ch[]);
+int get_char_code_len(huffmanNode* huffman_head, char ch[]);
 

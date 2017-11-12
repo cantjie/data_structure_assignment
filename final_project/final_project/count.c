@@ -16,14 +16,12 @@ listHead* count_from_file(char filename[]) {
 
 	fp = fopen(filename, "r");
 	head = create_list();
-	while ((*ch = fgetc(fp)) != EOF)
-	{
+	while ((*ch = fgetc(fp)) != EOF){
 		//ch[0]<0就说明是汉字，就再读取一个字符。
 		if (ch[0] < 0) {
 			ch[1] = fgetc(fp);
 		}
-		else
-		{
+		else{
 			ch[1] = '\0';
 		}
 		duplicate_tag = false;
@@ -53,7 +51,13 @@ listHead* count_from_file(char filename[]) {
 		head->cnt++;
 	}
 	fclose(fp);
-
+	ch[0] = '\0'; ch[1] = '\0';
+	if (!(p = append_list(head, ch))) {
+		printf("统计过程出现错误，请重新运行");
+		exit(0);
+	}
+	p->data.cnt = 0;
+	
 	//最后循环，改一下频率
 	while (data = foreach(head)) {
 		data->freq = (double)data->cnt / head->cnt;
