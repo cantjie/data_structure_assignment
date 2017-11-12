@@ -113,6 +113,64 @@ int get_char_code_len(huffmanNode* huffman_head, char ch[]) {
 	return 0;
 }
 
+void decode_from_file(huffmanNode * huffman_head, char encoded_filename[], char decoded_filename[])
+{
+	//TODO
+	//一定要做一下文件名合法性检验
+	if (false) {
+		printf("文件名不合法\t");
+		return 0;
+	}
+	FILE *fp_encoded, *fp_decoded;
+	huffmanNode *curr;
+	listNode *list_node;
+	int i;
+	char ch;
+	char ch_temp;
+	fp_encoded = fopen(encoded_filename, "rb");
+	fp_decoded = fopen(decoded_filename, "w");
+	if (NULL == fp_encoded || NULL == fp_decoded) {
+		printf("文件打开失败");
+		return 0;
+	}
+	curr = huffman_head;
+	//在读取二进制文件时，有可能会读到0000 0000 ，从而返回EOF造成文件提前终止
+	//while ((ch = fgetc(fp_encoded)) != EOF) {
+	while (1) {
+		ch = fgetc(fp_encoded);
+		for (i = 1; i <= 8; i++) {
+			ch_temp = ch & bi_array[i % 8];
+			if (ch_temp) {
+				curr = curr->rChild;
+			}
+			else {
+				curr = curr->lChild;
+			}
+			if (NULL == curr->rChild) {
+				list_node = (listNode*)curr->lChild;
+				if (list_node->data.ch[0] < 0) {
+					fwrite(list_node->data.ch, 2, 1, fp_decoded);
+					printf("%c%c", list_node->data.ch[0], list_node->data.ch[1]);
+				}
+				else {
+					if ('\0' == list_node->data.ch[0]) {
+						fclose(fp_encoded);
+						fclose(fp_decoded);
+						printf("\n");
+						return 0;
+					}
+					else {
+						fwrite(list_node->data.ch, 1, 1, fp_decoded);
+						printf("%c", list_node->data.ch[0]);
+					}
+				}
+				curr = huffman_head;
+			}
+		}
+	}
+
+}
+
 //向head指向的这个森林中插入一个p指针指向的节点,降序
 //@param forestNode* head
 //@param forestNode* p

@@ -112,8 +112,8 @@ void print_codebook(huffmanNode *huffman_head, listHead *list_head);
 
 //得到二进制码流并且将码流输出到文件中去。
 //@param huffmanNode *huffman_head
-//@param char output_filename[] 要存的文件名;
-//@param char input_filename[] 要压缩的文件
+//@param char output_filename[] 压缩后输出的文件的文件名
+//@param char input_filename[] 要压缩的文件名
 void file_put_stream(huffmanNode *huffman_head, char output_filename[], char input_filename[]);
 
 
@@ -130,3 +130,8 @@ huffmanNode* build_tree(listHead* head);
 //@return int 返回该编码长度。
 int get_char_code_len(huffmanNode* huffman_head, char ch[]);
 
+//将压缩后的文件解码，并输出到文件中去。
+//@param huffmanNode *huffman_head
+//@param char encoded_filename[] 压缩文件，储存二进制码流的文件
+//@param char decoded_filename[] 输出的文件名
+void decode_from_file(huffmanNode* huffman_head, char encoded_filename[], char decoded_filename[]);
