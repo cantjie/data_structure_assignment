@@ -68,14 +68,32 @@ huffmanNode* build_tree(listHead* head) {
 	return p_forest_head->pNode;
 }
 
+void drop_huffman_tree(huffmanNode * huffman_head)
+{
+	if (NULL == huffman_head) {
+		return;
+	}
+	if (NULL == huffman_head->rChild) {  //右子树为空说明是叶子结点
+		free(huffman_head);
+	}
+	else {
+		drop_huffman_tree(huffman_head->lChild);
+		drop_huffman_tree(huffman_head->rChild);
+		free(huffman_head);
+	}
+}
+
 int get_char_code_len(huffmanNode* huffman_head, char ch[]) {
-	treeStackHead* stack_head;
+	// 避免多次开辟栈头结点浪费时间
+	static treeStackHead* stack_head = NULL;
 	treeStackNode stack_node;
 	huffmanNode* curr;
 	listNode* p_list_node;
 	unsigned char ch_temp;
 	int len = 0;  //编码长度（二进制位数）
-	stack_head = createStack();
+	if (NULL == stack_head) {
+		stack_head = createStack();
+	}
 	curr = huffman_head;
 	while (curr) {
 		if (NULL == curr->rChild) {  //这说明curr指向叶子结点
@@ -109,18 +127,12 @@ int get_char_code_len(huffmanNode* huffman_head, char ch[]) {
 			G_code_array[(len - 1) / 8] = G_code_array[(len - 1) / 8] & ~bi_array[len % 8];
 		}
 	} //end while
-	free(stack_head);
+	//free(stack_head);
 	return 0;
 }
 
 void decode_from_file(huffmanNode * huffman_head, char encoded_filename[], char decoded_filename[])
 {
-	//TODO
-	//一定要做一下文件名合法性检验
-	if (false) {
-		printf("文件名不合法\t");
-		return 0;
-	}
 	FILE *fp_encoded, *fp_decoded;
 	huffmanNode *curr;
 	listNode *list_node;
@@ -131,7 +143,7 @@ void decode_from_file(huffmanNode * huffman_head, char encoded_filename[], char 
 	fp_decoded = fopen(decoded_filename, "w");
 	if (NULL == fp_encoded || NULL == fp_decoded) {
 		printf("文件打开失败");
-		return 0;
+		return ;
 	}
 	curr = huffman_head;
 	//在读取二进制文件时，有可能会读到0000 0000 ，从而返回EOF造成文件提前终止
@@ -157,7 +169,7 @@ void decode_from_file(huffmanNode * huffman_head, char encoded_filename[], char 
 						fclose(fp_encoded);
 						fclose(fp_decoded);
 						printf("\n");
-						return 0;
+						return ;
 					}
 					else {
 						fwrite(list_node->data.ch, 1, 1, fp_decoded);

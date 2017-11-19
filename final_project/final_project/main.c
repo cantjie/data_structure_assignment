@@ -1,32 +1,355 @@
 #include "header.h"
+#define FILENAME_LEN_MAX 70
+
+bool isFilenameLegal(char filename[]) {
+	//TODO
+	//<>, / , \, | , :, "", *, ?
+	//@link https://stackoverflow.com/questions/6416065/c-sharp-regex-for-file-paths-e-g-c-test-test-exe
+	//感觉这个匹配也不是很好
+	//@link https://stackoverflow.com/questions/1085083/regular-expressions-in-c-examples
+
+	return true;
+}
+
+bool FilenameEndsWith(char filename[], char suffix[])
+{
+	//TODO
+	return true;
+}
+
+//主界面，打印功能
+//@param bool cls 是否清屏
+//@return int 0-9 返回功能编号
+int chooseFunction(bool cls) {
+	int func_tag;
+	if (cls) {
+		system("cls");
+	}
+	printf("输入数字以选择功能：\n\n");
+	printf("1.从文本文件统计词频\n\n");
+	printf("2.打印树形（按层次遍历的方式）\n\n");
+	printf("3.打印码本\n\n");
+	printf("4.压缩文件\n\n");
+	printf("5.解压文件\n\n");
+	printf("6.保存码本信息\n\n");
+	printf("7.读取频率(码本)信息\n\n");
+	printf("8.比较两文本文件是否相同\n\n");
+	printf("9.查找某个字的编码和频率\n\n");
+	printf("0.退出\n\n");
+	printf("10.帮助\n\n");
+	rewind(stdin);
+	scanf("%d", &func_tag);
+	if (func_tag >= 0 && func_tag <= 9) {
+		return func_tag;
+	}
+	else {
+		printf("请输入数字0-10以选择功能\n");
+		return chooseFunction(false);
+	}
+}
+
+//主界面，选择模式
+//@param bool cls 是否清屏
+//@return bool true for 空间优先，false for 时间优先
+bool chooseMode(bool cls) {
+	bool mode = true;
+	char ch;
+	if (cls) {
+		system("cls");
+	}
+	printf("请选择模式：\n\n");
+	printf("1.空间优先模式(推荐)\n\n");
+	printf("2.时间优先模式\n\n");
+	rewind(stdin);
+	scanf("%c", &ch);
+	switch (ch)
+	{
+	case '1':
+		return true;
+	case '2':  //false for 时间优先
+		return false;
+	default:
+		printf("请输入“1”或“2”以选择模式");
+		return chooseMode(false);
+		break;
+	}
+
+}
+
+//打印帮助信息
+void printHelp(void) {
+	//TODO
+}
 
 int main(int argc, char *argv[]) {
-	listHead *list_head;
-	listNode *list_node;
-	huffmanNode *huffman_head;
-	int len;  //当前编码长度（位数）
-	int i, j, k;
-	char input_filename[50] = "test.txt";
-	char output_filename[50] = "compressed.dat";
+	listHead *list_head = NULL;
+	huffmanNode *huffman_head = NULL;
+	tfListHead *tf_list_head = NULL;
+	bool mode = true;  //true for 空间优先，false for 时间优先
+	int func_tag = 1;
+	int exit_tag;
+	char input_filename[FILENAME_LEN_MAX] = "test.txt";
+	char compressed_filename[FILENAME_LEN_MAX] = "compressed.dat";
+	char target_filename[FILENAME_LEN_MAX] = "uncompressed.txt";
+	//后缀可以用宏定义一下
+	char list_filename[FILENAME_LEN_MAX] = "list.tf";  //term frequency
+	char temp[FILENAME_LEN_MAX] = "test.txt";
+
+	FILE *fp;
+	char filename[70] = "D:\\aa\\aa\\assignment\\final_project\\final_project\\t.t";
+	//scanf("%s", filename);
+	fp = fopen(filename, "w");
+	printf("%d", fp);
 	
-	list_head = count_from_file(input_filename);
 
-	sort_list(list_head, 0);
+	return 0;
 
-	//print_data(list_head);
+	while (true) {
+		func_tag = chooseFunction(true);
+		switch (func_tag)
+		{
+		case 1:  //	1.从文本文件统计词频
+			system("cls");
+			printf("请输入要统计词频的文件名(路径)(%d字符以内)：\n", FILENAME_LEN_MAX);
+			printf("<%s>:", input_filename);
+			//土方法给出默认值
+			rewind(stdin);
+			scanf("%c", temp);
+			if ('\n' != temp[0]) {
+				scanf("%s", &temp[1]);
+				while (!isFilenameLegal(temp)) {
+					printf("文件路径不合法。\n请重新输入要统计词频的文件名(路径)(%d字符以内)：\n", FILENAME_LEN_MAX);
+					scanf("%s", temp);
+				}
+				memcpy(input_filename, temp, FILENAME_LEN_MAX);
+			}
+			list_head = count_from_file(input_filename);
+			sort_list(list_head, false);
+			huffman_head = build_tree(list_head);
+			print_freq(list_head);
+			drop_tf_list(tf_list_head);
+			free(tf_list_head);
+			tf_list_head = NULL;
+			break;
+		case 2:  //2.打印树形（按层次遍历的方式）
+			if (NULL == huffman_head) {
+				printf("还没有建哈夫曼树哦，请通过统计词频来建立哈夫曼树\n");
+				printf("或者通过读取.tf文件来建立哈夫曼树\n");
+				break;
+			}
+			else {
+				print_huffman_tree(huffman_head);
+			}
+			break;
+		case 3:  //打印码本
+			if (NULL == huffman_head) {
+				printf("还没有建哈夫曼树哦，请通过统计词频来建立哈夫曼树\n");
+				printf("或者通过读取.tf文件来建立哈夫曼树\n");
+				break;
+			}
+			if (NULL == list_head) {
+				printf("还没有给出词频链表哦，请通过统计词频来建立词频链表\n");
+				printf("或者通过读取.tf文件来建立词频链表\n");
+				break;
+			}
+			else {
+				print_codebook(huffman_head, list_head);
+			}
+			break;
+		case 4:  //压缩文件
+			mode = chooseMode(true);
+			if (NULL == huffman_head) {
+				printf("还没有建哈夫曼树哦，请通过统计词频来建立哈夫曼树\n");
+				printf("或者通过读取.tf文件来建立哈夫曼树\n");
+				break;
+			}
+			if (NULL == list_head) {
+				printf("还没有给出词频链表哦，请通过统计词频来建立词频链表\n");
+				printf("或者通过读取.tf文件来建立词频链表\n");
+				break;
+			}
+			printf("请输入要压缩的文件名(路径)(%d字符以内)：\n", FILENAME_LEN_MAX);
+			printf("<%s>:", input_filename);
+			rewind(stdin);
+			scanf("%c", temp);
+			if ('\n' != temp[0]) {
+				scanf("%s", &temp[1]);
+				while (!isFilenameLegal(temp)) {
+					printf("文件路径不合法。\n请重新输入要压缩的文件名(路径)(%d字符以内)：\n", FILENAME_LEN_MAX);
+					scanf("%s", temp);
+				}
+				memcpy(input_filename, temp, FILENAME_LEN_MAX);
+			}
 
-	huffman_head = build_tree(list_head);
+			printf("请输入要保存到的文件的文件名(路径)(%d字符以内)：\n", FILENAME_LEN_MAX);
+			printf("<%s>:", compressed_filename);
+			rewind(stdin);
+			scanf("%c", temp);
+			if ('\n' != temp[0]) {
+				scanf("%s", &temp[1]);
+				while (!isFilenameLegal(temp)) {
+					printf("文件路径不合法。\n请重新输入要保存到的文件名(路径)(%d字符以内)：\n", FILENAME_LEN_MAX);
+					scanf("%s", temp);
+				}
+				memcpy(compressed_filename, temp, FILENAME_LEN_MAX);
+			}
 
+			if (mode) {
+				encode_and_save(huffman_head, compressed_filename, input_filename);
+			}
+			else {
+				if (NULL == tf_list_head) {
+					tf_list_head = create_tf_list(list_head, huffman_head);
+				}
+				encode_and_save_tf(tf_list_head, compressed_filename, input_filename);
+			}
+			break;
+		case 5:  //解压文件
+			if (NULL == huffman_head) {
+				printf("还没有建哈夫曼树哦，请通过统计词频来建立哈夫曼树\n");
+				printf("或者通过读取.tf文件来建立哈夫曼树");
+				break;
+			}
+
+			printf("请输入要解压缩的文件名(路径)(%d字符以内)：\n", FILENAME_LEN_MAX);
+			printf("<%s>:", compressed_filename);
+			rewind(stdin);
+			scanf("%c", temp);
+			if ('\n' != temp[0]) {
+				scanf("%s", &temp[1]);
+				while (!isFilenameLegal(temp)) {
+					printf("文件路径不合法。\n请重新输入要解压缩的文件名(路径)(%d字符以内)：\n", FILENAME_LEN_MAX);
+					scanf("%s", temp);
+				}
+				memcpy(compressed_filename, temp, FILENAME_LEN_MAX);
+			}
+
+			printf("请输入解压后输出的文件名(路径)(%d字符以内)：\n", FILENAME_LEN_MAX);
+			printf("<%s>:", target_filename);
+			rewind(stdin);
+			scanf("%c", temp);
+			if ('\n' != temp[0]) {
+				scanf("%s", &temp[1]);
+				while (!isFilenameLegal(temp)) {
+					printf("文件路径不合法。\n请重新输入解压后输出的文件名(路径)(%d字符以内)：\n", FILENAME_LEN_MAX);
+					scanf("%s", temp);
+				}
+				memcpy(target_filename, temp, FILENAME_LEN_MAX);
+			}
+
+			decode_from_file(huffman_head, compressed_filename, target_filename);
+
+			break;
+		case 6:  //	保存频率信息
+			if (NULL == list_head) {
+				printf("还没有给出词频链表哦，请通过统计词频来建立词频链表\n");
+				printf("或者通过读取.tf文件来建立词频链表");
+				break;
+			}
+
+			printf("请输入要保存频率信息的文件名(路径)(%d字符以内且以.tf结尾)：\n", FILENAME_LEN_MAX);
+			printf("<%s>:", list_filename);
+			rewind(stdin);
+			scanf("%c", temp);
+			if ('\n' != temp[0]) {
+				scanf("%s", &temp[1]);
+				while (!isFilenameLegal(temp) || !FilenameEndsWith(temp, "tf")) {
+					printf("文件路径不合法。\n请重新输入要保存频率信息的文件名(路径)(%d字符以内且以.tf结尾)：\n", FILENAME_LEN_MAX);
+					scanf("%s", temp);
+				}
+				memcpy(list_filename, temp, FILENAME_LEN_MAX);
+			}
+
+			save_list(list_head, list_filename);
+			break;
+
+		case 7:  //读取码本信息
+			printf("请输入保存频率信息的文件名(路径)(%d字符以内且以.tf结尾)：\n", FILENAME_LEN_MAX);
+			printf("<%s>:", list_filename);
+			rewind(stdin);
+			scanf("%c", temp);
+			if ('\n' != temp[0]) {
+				scanf("%s", &temp[1]);
+				while (!isFilenameLegal(temp) || !FilenameEndsWith(temp, "tf")) {
+					printf("文件路径不合法。\n请重新输入保存频率信息的文件名(路径)(%d字符以内且以.tf结尾)：\n", FILENAME_LEN_MAX);
+					scanf("%s", temp);
+				}
+				memcpy(list_filename, temp, FILENAME_LEN_MAX);
+			}
+
+			list_head = create_list_from_file(list_head, list_filename);
+			drop_huffman_tree(huffman_head);
+			huffman_head = build_tree(list_head);
+			print_freq(list_head);
+			drop_tf_list(tf_list_head);
+			free(tf_list_head);
+			tf_list_head = NULL;
+			break;
+		case 8:  //printf("8.比较两文件是否相同\n\n");
+			printf("请输入第一个文件名(路径)(%d字符以内)：\n", FILENAME_LEN_MAX);
+			printf("<%s>:", input_filename);
+			rewind(stdin);
+			scanf("%c", temp);
+			if ('\n' != temp[0]) {
+				scanf("%s", &temp[1]);
+				while (!isFilenameLegal(temp)) {
+					printf("文件路径不合法。\n请重新输入第一个文件名(路径)(%d字符以内且以.tf结尾)：\n", FILENAME_LEN_MAX);
+					scanf("%s", temp);
+				}
+				memcpy(input_filename, temp, FILENAME_LEN_MAX);
+			}
+
+			printf("请输入第二个文件名(路径)(%d字符以内)：\n", FILENAME_LEN_MAX);
+			printf("<%s>:", target_filename);
+			rewind(stdin);
+			scanf("%c", temp);
+			if ('\n' != temp[0]) {
+				scanf("%s", &temp[1]);
+				while (!isFilenameLegal(temp)) {
+					printf("文件路径不合法。\n请重新输入第二个文件名(路径)(%d字符以内且以.tf结尾)：\n", FILENAME_LEN_MAX);
+					scanf("%s", temp);
+				}
+				memcpy(target_filename, temp, FILENAME_LEN_MAX);
+			}
+
+			if (file_compare(input_filename, target_filename)) {
+				printf("\n两文件相同\n");
+			}
+			else {
+				printf("\n两文件不相同\n");
+			}
+			break;
+		case 9:  //printf("9.帮助\n\n");
+			//todo
+			printf("尚未完成此功能\n");
+			break;
+		case 10:  //帮助
+			//todo
+			break;
+		case 0:
+			return 0;
+		default:
+			break;
+		}
+		printf("输入0以退出，输入1以继续:");
+		scanf("%d", &exit_tag);
+		if (0 == exit_tag) {
+			return 0;
+		}
+	}
+
+	//list_head = count_from_file(input_filename);
+	//sort_list(list_head, 0);
+	//print_freq(list_head);
+	//huffman_head = build_tree(list_head);
+	//save_codebook(huffman_head, list_head, codebook_filename);
+	//save_list(list_head, list_filename);
 	//print_huffman_tree(huffman_head);
-
 	//print_one_char_code(huffman_head, "中");
-
 	//print_codebook(huffman_head, list_head);
-
-	file_put_stream(huffman_head, output_filename, input_filename);
-
-	system("pause");
-	decode_from_file(huffman_head, output_filename, "uncompressed.txt");
+	//encode_and_save(huffman_head, compressed_filename, input_filename);
+	//decode_from_file(huffman_head, compressed_filename, "uncompressed.txt");
+	//list_head = create_list_from_file(list_head, list_filename);
 
 	return 0;
 }

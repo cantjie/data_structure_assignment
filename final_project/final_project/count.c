@@ -15,18 +15,18 @@ listHead* count_from_file(char filename[]) {
 	listNode *p;
 
 	fp = fopen(filename, "r");
-	head = create_list();
-	while ((*ch = fgetc(fp)) != EOF){
+	head = create_null_list();
+	while ((*ch = fgetc(fp)) != EOF) {
 		//ch[0]<0就说明是汉字，就再读取一个字符。
 		if (ch[0] < 0) {
 			ch[1] = fgetc(fp);
 		}
-		else{
+		else {
 			ch[1] = '\0';
 		}
 		duplicate_tag = false;
 		//判断是否重复
-		while (data = foreach(head)) {
+		while (data = foreach_list(head)) {
 			//如果两字符串相等，说明重复了，则频数+1
 			//注意这里不能用strcmp，strcmp会比较直到'\0'
 			//if (0 == strcmp(data->ch, ch)) {
@@ -51,15 +51,18 @@ listHead* count_from_file(char filename[]) {
 		head->cnt++;
 	}
 	fclose(fp);
+
+	//最后增加一个表示结束的字符
 	ch[0] = '\0'; ch[1] = '\0';
 	if (!(p = append_list(head, ch))) {
 		printf("统计过程出现错误，请重新运行");
 		exit(0);
 	}
 	p->data.cnt = 0;
-	
+	head->length -= 1;
+
 	//最后循环，改一下频率
-	while (data = foreach(head)) {
+	while (data = foreach_list(head)) {
 		data->freq = (double)data->cnt / head->cnt;
 	}
 
@@ -109,7 +112,7 @@ listNode* mergelist(listNode * p1, listNode * p2, bool mode)
 	// 这里用两层判断写也可以，但看着太乱了。
 	//现在这样做的缺点是不具有稳定性，但该工程对排序稳定性无要求
 	if (p1->data.cnt < p2->data.cnt) {
-		head = mode ? p1 : p2; 
+		head = mode ? p1 : p2;
 		mode ? (p1 = p1->next) : (p2 = p2->next);
 	}
 	else
