@@ -171,6 +171,7 @@ tfListData get_tf_node_data(tfListHead *tf_list_head,char ch[])
 		if (0 == memcmp(tf_list_node->data.ch, ch, sizeof(char) * 2)) {
 			return tf_list_node->data;
 		}
+		tf_list_node = tf_list_node->next;
 	}
 	return data;
 }

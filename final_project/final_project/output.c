@@ -246,6 +246,10 @@ bool file_compare(char file1_name[], char file2_name[])
 	char ch1, ch2;
 	fp1 = fopen(file1_name, "rb");
 	fp2 = fopen(file2_name, "rb");
+	if (NULL == fp1 || NULL == fp2) {
+		printf("文件打开失败");
+		return false;
+	}
 	while (true) {
 		ch1 = fgetc(fp1);
 		ch2 = fgetc(fp2);

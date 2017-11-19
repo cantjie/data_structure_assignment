@@ -2,19 +2,31 @@
 #define FILENAME_LEN_MAX 70
 
 bool isFilenameLegal(char filename[]) {
-	//TODO
 	//<>, / , \, | , :, "", *, ?
-	//@link https://stackoverflow.com/questions/6416065/c-sharp-regex-for-file-paths-e-g-c-test-test-exe
-	//感觉这个匹配也不是很好
-	//@link https://stackoverflow.com/questions/1085083/regular-expressions-in-c-examples
-
+	//放弃正则
+	char exception[] = { "<>/|:\"*?" };
+	int i = 0;
+	int j = 0;
+	for (i=0 ; filename[i]!='\0'; i++)
+	{
+		for (j = 0; exception[j] != '\0'; j++) {
+			if (filename[i] == exception[j]) {
+				return false;
+			}
+		}
+	}
 	return true;
 }
 
-bool FilenameEndsWith(char filename[], char suffix[])
+bool filenameEndsWith(char filename[], char suffix[])
 {
-	//TODO
-	return true;
+	int len_filename = strlen(filename);
+	int len_suffix = strlen(suffix);
+	filename += len_filename - len_suffix;
+	if (0 == strncmp(filename, suffix, len_suffix))
+		return true;
+	else
+		return false;
 }
 
 //主界面，打印功能
@@ -32,18 +44,17 @@ int chooseFunction(bool cls) {
 	printf("4.压缩文件\n\n");
 	printf("5.解压文件\n\n");
 	printf("6.保存码本信息\n\n");
-	printf("7.读取频率(码本)信息\n\n");
+	printf("7.读取码本信息\n\n");
 	printf("8.比较两文本文件是否相同\n\n");
-	printf("9.查找某个字的编码和频率\n\n");
+	printf("9.帮助\n\n");
 	printf("0.退出\n\n");
-	printf("10.帮助\n\n");
 	rewind(stdin);
 	scanf("%d", &func_tag);
 	if (func_tag >= 0 && func_tag <= 9) {
 		return func_tag;
 	}
 	else {
-		printf("请输入数字0-10以选择功能\n");
+		printf("请输入数字0-9以选择功能\n");
 		return chooseFunction(false);
 	}
 }
@@ -79,6 +90,7 @@ bool chooseMode(bool cls) {
 //打印帮助信息
 void printHelp(void) {
 	//TODO
+	printf("这么简单的程序，自己探索不就好啦︿(￣︶￣)︿\n");
 }
 
 int main(int argc, char *argv[]) {
@@ -91,18 +103,14 @@ int main(int argc, char *argv[]) {
 	char input_filename[FILENAME_LEN_MAX] = "test.txt";
 	char compressed_filename[FILENAME_LEN_MAX] = "compressed.dat";
 	char target_filename[FILENAME_LEN_MAX] = "uncompressed.txt";
-	//后缀可以用宏定义一下
 	char list_filename[FILENAME_LEN_MAX] = "list.tf";  //term frequency
 	char temp[FILENAME_LEN_MAX] = "test.txt";
 
-	FILE *fp;
-	char filename[70] = "D:\\aa\\aa\\assignment\\final_project\\final_project\\t.t";
+	//FILE *fp;
+	//char filename[70] = "D:\\aa\\aa\\assignment\\final_project\\final_project\\t.t";
 	//scanf("%s", filename);
-	fp = fopen(filename, "w");
-	printf("%d", fp);
-	
-
-	return 0;
+	//fp = fopen(filename, "w");
+	//printf("%d", fp);
 
 	while (true) {
 		func_tag = chooseFunction(true);
@@ -124,12 +132,22 @@ int main(int argc, char *argv[]) {
 				memcpy(input_filename, temp, FILENAME_LEN_MAX);
 			}
 			list_head = count_from_file(input_filename);
-			sort_list(list_head, false);
-			huffman_head = build_tree(list_head);
-			print_freq(list_head);
-			drop_tf_list(tf_list_head);
-			free(tf_list_head);
-			tf_list_head = NULL;
+			if (NULL == list_head) {
+				printf("统计失败。");
+				break;
+			}
+			else {
+				sort_list(list_head, false);
+				huffman_head = build_tree(list_head);
+				if (NULL == huffman_head) {
+					printf("建立哈夫曼树失败");
+					break;
+				}
+				print_freq(list_head);
+				drop_tf_list(tf_list_head);
+				free(tf_list_head);
+				tf_list_head = NULL;
+			}
 			break;
 		case 2:  //2.打印树形（按层次遍历的方式）
 			if (NULL == huffman_head) {
@@ -203,6 +221,7 @@ int main(int argc, char *argv[]) {
 				}
 				encode_and_save_tf(tf_list_head, compressed_filename, input_filename);
 			}
+			printf("压缩成功");
 			break;
 		case 5:  //解压文件
 			if (NULL == huffman_head) {
@@ -243,7 +262,7 @@ int main(int argc, char *argv[]) {
 		case 6:  //	保存频率信息
 			if (NULL == list_head) {
 				printf("还没有给出词频链表哦，请通过统计词频来建立词频链表\n");
-				printf("或者通过读取.tf文件来建立词频链表");
+				printf("或者通过读取.tf文件来建立词频链表\n");
 				break;
 			}
 
@@ -253,7 +272,7 @@ int main(int argc, char *argv[]) {
 			scanf("%c", temp);
 			if ('\n' != temp[0]) {
 				scanf("%s", &temp[1]);
-				while (!isFilenameLegal(temp) || !FilenameEndsWith(temp, "tf")) {
+				while (!isFilenameLegal(temp) || !filenameEndsWith(temp, "tf")) {
 					printf("文件路径不合法。\n请重新输入要保存频率信息的文件名(路径)(%d字符以内且以.tf结尾)：\n", FILENAME_LEN_MAX);
 					scanf("%s", temp);
 				}
@@ -270,7 +289,7 @@ int main(int argc, char *argv[]) {
 			scanf("%c", temp);
 			if ('\n' != temp[0]) {
 				scanf("%s", &temp[1]);
-				while (!isFilenameLegal(temp) || !FilenameEndsWith(temp, "tf")) {
+				while (!isFilenameLegal(temp) || !filenameEndsWith(temp, "tf")) {
 					printf("文件路径不合法。\n请重新输入保存频率信息的文件名(路径)(%d字符以内且以.tf结尾)：\n", FILENAME_LEN_MAX);
 					scanf("%s", temp);
 				}
@@ -278,8 +297,16 @@ int main(int argc, char *argv[]) {
 			}
 
 			list_head = create_list_from_file(list_head, list_filename);
+			if (NULL == list_head) {
+				printf("统计词频失败");
+				break;
+			}
 			drop_huffman_tree(huffman_head);
 			huffman_head = build_tree(list_head);
+			if (NULL == huffman_head) {
+				printf("建立哈夫曼树失败");
+				break;
+			}
 			print_freq(list_head);
 			drop_tf_list(tf_list_head);
 			free(tf_list_head);
@@ -320,11 +347,7 @@ int main(int argc, char *argv[]) {
 			}
 			break;
 		case 9:  //printf("9.帮助\n\n");
-			//todo
-			printf("尚未完成此功能\n");
-			break;
-		case 10:  //帮助
-			//todo
+			printHelp();
 			break;
 		case 0:
 			return 0;

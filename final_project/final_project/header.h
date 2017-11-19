@@ -85,9 +85,10 @@ unsigned char G_code_array[MAX_CODE_LEN];
 bool isFilenameLegal(char filename[]);
 
 //检查文件名后缀
-//@param 
-//todo
-bool FilenameEndsWith(char filename[], char suffix[]);
+//@param char filename[]
+//@param char suffix[] 
+//@return bool 文件后缀为suffix，则返回true
+bool filenameEndsWith(char filename[], char suffix[]);
 
 //list.c
 
@@ -145,12 +146,6 @@ void sort_list(listHead* head, bool mode);
 //美观地输出频率频度
 //@param listHead* head目标链表的头结点
 void print_freq(listHead *head);
-
-//从链表中查找一个字的频率频度
-//@param listHead* list_head
-//@param char ch[]
-//TODO
-void print_one_char_freq(listHead *list_head, char ch[]);
 
 //美观地输出哈夫曼树
 //@param huffmanNode* head目标哈夫曼树的根节点

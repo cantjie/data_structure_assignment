@@ -32,7 +32,7 @@ treeStackNode popStack(treeStackHead* stack_head);
 huffmanNode* build_tree(listHead* head) {
 	if (NULL == head->next || NULL == head->next->next) {
 		printf("该文件仅有一种字符或没有字符，拒绝建立哈夫曼编码\n");
-		exit(0);
+		return NULL;
 	}
 
 	//p1,p2找权重最小的两个结点，p存新结点。prev_p1存p1的前驱

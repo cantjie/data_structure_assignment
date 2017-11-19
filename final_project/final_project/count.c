@@ -15,6 +15,9 @@ listHead* count_from_file(char filename[]) {
 	listNode *p;
 
 	fp = fopen(filename, "r");
+	if (NULL == fp) {
+		return NULL;
+	}
 	head = create_null_list();
 	while ((*ch = fgetc(fp)) != EOF) {
 		//ch[0]<0就说明是汉字，就再读取一个字符。
