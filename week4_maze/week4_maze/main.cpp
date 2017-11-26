@@ -45,11 +45,6 @@ public:
 		end_node.y = MAZE_SIZE - 1;
 		start_node.x = 0;
 		start_node.y = 0;
-		//for (int i = 0; i < MAZE_SIZE; i++) {
-		//	for (int j = 0; j < MAZE_SIZE; j++) {
-		//		maze[i][j] = 1;
-		//	}
-		//}
 		int a[MAZE_SIZE][MAZE_SIZE] = { 
 		{ 0, 0, 0, 1, 1, 1, 1, 1, 1, 1 },
 		{ 1, 1, 0, 1, 1, 1, 1, 1, 1, 1 },

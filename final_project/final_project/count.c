@@ -2,9 +2,9 @@
 
 listNode* getMiddle(listNode* p);
 
-listNode* mergelist(listNode* p1, listNode* p2, bool mode);
+listNode* mergeList(listNode* p1, listNode* p2, bool mode);
 
-listNode* sortlist(listNode* p, bool mode);
+listNode* sortList(listNode* p, bool mode);
 
 listHead* count_from_file(char filename[]) {
 	listHead *head;
@@ -73,7 +73,7 @@ listHead* count_from_file(char filename[]) {
 }
 
 void sort_list(listHead* head, bool mode) {
-	head->next = sortlist(head->next, mode);
+	head->next = sortList(head->next, mode);
 	while (head->tail->next)
 	{
 		head->tail = head->tail->next;
@@ -104,7 +104,7 @@ listNode* getMiddle(listNode* p) {
 //@param listNode p2
 //@param bool mode true表示增序，false表示降序
 //@return listNode*
-listNode* mergelist(listNode * p1, listNode * p2, bool mode)
+listNode* mergeList(listNode * p1, listNode * p2, bool mode)
 {
 	if (NULL == p1) return p2;
 	if (NULL == p2) return p1;
@@ -152,7 +152,7 @@ listNode* mergelist(listNode * p1, listNode * p2, bool mode)
 //@param listNode p 链表第一个非头结点
 //@param bool mode true表示增序，false表示降序
 //@return listNode* 
-listNode* sortlist(listNode * p, bool mode)
+listNode* sortList(listNode * p, bool mode)
 {
 	if (!(p && p->next)) return p;  // 返回空或者这个唯一的结点
 
@@ -162,5 +162,5 @@ listNode* sortlist(listNode * p, bool mode)
 		latter_part = middle->next;
 		middle->next = NULL;
 	}
-	return mergelist(sortlist(p, mode), sortlist(latter_part, mode), mode);
+	return mergeList(sortList(p, mode), sortList(latter_part, mode), mode);
 }
