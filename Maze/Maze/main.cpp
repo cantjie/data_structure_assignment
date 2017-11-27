@@ -115,7 +115,6 @@ int Maze::process() {
 	Node curr_node;
 	int dir;
 	curr_node = startNode;
-
 	while (curr_node != endNode) {
 		dir = HasWay(curr_node.getX(), curr_node.getY());
 		if (dir) {

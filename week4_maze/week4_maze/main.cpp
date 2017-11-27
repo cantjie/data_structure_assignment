@@ -216,6 +216,8 @@ bool Stack::Push(int x, int y) {
 
 int main()
 {
+	system("pause");
 	Maze *MyMaze = new Maze();
 	MyMaze->Process();
+	return 0;
 }
