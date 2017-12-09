@@ -13,7 +13,7 @@
 
 #endif
 
-//数据结构定义部分
+/*数据结构定义部分*/
 
 //链表结点内的数据的定义
 typedef struct listData
@@ -44,7 +44,7 @@ typedef struct listHead
 typedef struct tfListData
 {
 	char ch[2];
-	unsigned char valid_len;
+	unsigned char validLen;
 	unsigned char code[MAX_CODE_LEN];
 }tfListData;
 
@@ -75,9 +75,9 @@ typedef struct huffmanNode
 unsigned char G_code_array[MAX_CODE_LEN];
 
 
-//函数声明部分
+/******函数声明部分******/
 
-//main.c
+/****main.c****/
 
 //检查文件名是否合法
 //@param char filename[]
@@ -90,7 +90,7 @@ bool isFilenameLegal(char filename[]);
 //@return bool 文件后缀为suffix，则返回true
 bool filenameEndsWith(char filename[], char suffix[]);
 
-//list.c
+/****list.c****/
 
 //创建一个新的空链表，返回链表头
 listHead* create_null_list(void);
@@ -128,7 +128,8 @@ void drop_list(listHead* list_head);
 //删除链表：删除除头结点外的其他节点，注意预防野指针
 void drop_tf_list(tfListHead * list_head);
 
-//count.c
+
+/****count.c****/
 
 //用来统计频率，返回一个链表头
 //@param filename string 文件名
@@ -141,7 +142,7 @@ listHead* count_from_file(char filename[]);
 void sort_list(listHead* head, bool mode);
 
 
-//output.c
+/****output.c****/
 
 //美观地输出频率频度
 //@param listHead* head目标链表的头结点
@@ -172,6 +173,12 @@ void print_codebook(huffmanNode *huffman_head, listHead *list_head);
 //@param char codebook_filename[] 保存到文件的位置
 void save_list(listHead *list_head, char list_filename[]);
 
+//保存节点信息,保存到可视化的TXT文件
+//@param listHead *list_head
+//@param huffmanNode *huffman_head
+//@param char codebook_filename[] 保存到文件的位置
+void save_vi_list(listHead *list_head, huffmanNode *huffman_head, char list_vi_filename[]);
+
 //空间优先模式得到二进制码流并且将码流输出到文件中去。
 //@param huffmanNode *huffman_head
 //@param char output_filename[] 压缩后输出的文件的文件名
@@ -190,7 +197,7 @@ void encode_and_save_tf(tfListHead *tf_list_head, char output_filename[], char i
 bool file_compare(char file1_name[], char file2_name[]);
 
 
-//huffman.c
+/****huffman.c****/
 
 //由统计结果建立哈夫曼树
 //@param listHead* head

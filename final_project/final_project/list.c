@@ -155,7 +155,7 @@ tfListHead* create_tf_list(listHead *list_head, huffmanNode *huffman_head) {
 		code_len = (unsigned char)get_char_code_len(huffman_head, data->ch);
 		memcpy(tf_list_node->data.ch, data->ch, 2 * sizeof(char));
 		memcpy(tf_list_node->data.code, G_code_array, MAX_CODE_LEN);
-		tf_list_node->data.valid_len = code_len;
+		tf_list_node->data.validLen = code_len;
 		tf_list_node->next = NULL;
 	}
 	return tf_list_head;
@@ -165,7 +165,7 @@ tfListData get_tf_node_data(tfListHead *tf_list_head,char ch[])
 {
 	tfListData data;
 	tfListNode *tf_list_node = NULL;
-	data.valid_len = 0;
+	data.validLen = 0;
 	tf_list_node = tf_list_head->next;
 	while (tf_list_node) {
 		if (0 == memcmp(tf_list_node->data.ch, ch, sizeof(char) * 2)) {

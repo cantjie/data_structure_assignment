@@ -4,10 +4,10 @@
 bool isFilenameLegal(char filename[]) {
 	//<>, / , \, | , :, "", *, ?
 	//放弃正则
-	char exception[] = { "<>/|:\"*?" };
+	char exception[] = { "<>/|\"*?" };
 	int i = 0;
 	int j = 0;
-	for (i=0 ; filename[i]!='\0'; i++)
+	for (i = 0; filename[i] != '\0'; i++)
 	{
 		for (j = 0; exception[j] != '\0'; j++) {
 			if (filename[i] == exception[j]) {
@@ -59,11 +59,10 @@ int chooseFunction(bool cls) {
 	}
 }
 
-//主界面，选择模式
+//选择模式
 //@param bool cls 是否清屏
 //@return bool true for 空间优先，false for 时间优先
 bool chooseMode(bool cls) {
-	bool mode = true;
 	char ch;
 	if (cls) {
 		system("cls");
@@ -84,7 +83,32 @@ bool chooseMode(bool cls) {
 		return chooseMode(false);
 		break;
 	}
+}
 
+//选择保存码本的模式
+//@param bool cls 是否清屏
+//@return bool true for 可视化文件，false for 二进制tf文件
+bool chooseCodebookMode(bool cls) {
+	bool mode = true;
+	char ch;
+	if (cls) {
+		system("cls");
+	}
+	printf("请选择模式：\n\n");
+	printf("1.可视化txt文件\n\n");
+	printf("2.二进制tf文件\n\n");
+	rewind(stdin);
+	scanf("%c", &ch);
+	switch (ch)
+	{
+	case '1':
+		return true;
+	case '2':
+		return false;
+	default:
+		printf("请输入“1”或“2”以选择模式");
+		return chooseMode(false);
+	}
 }
 
 //打印帮助信息
@@ -98,6 +122,7 @@ int main(int argc, char *argv[]) {
 	huffmanNode *huffman_head = NULL;
 	tfListHead *tf_list_head = NULL;
 	bool mode = true;  //true for 空间优先，false for 时间优先
+	bool codebook_mode = false;
 	int func_tag = 1;
 	int exit_tag;
 	char input_filename[FILENAME_LEN_MAX] = "test.txt";
@@ -105,7 +130,7 @@ int main(int argc, char *argv[]) {
 	char target_filename[FILENAME_LEN_MAX] = "uncompressed.txt";
 	char list_filename[FILENAME_LEN_MAX] = "list.tf";  //term frequency
 	char temp[FILENAME_LEN_MAX] = "test.txt";
-
+	char list_vi_filename[FILENAME_LEN_MAX] = "Statistic.txt";
 	//FILE *fp;
 	//char filename[70] = "D:\\aa\\aa\\assignment\\final_project\\final_project\\t.t";
 	//scanf("%s", filename);
@@ -266,21 +291,41 @@ int main(int argc, char *argv[]) {
 				break;
 			}
 
-			printf("请输入要保存频率信息的文件名(路径)(%d字符以内且以.tf结尾)：\n", FILENAME_LEN_MAX);
-			printf("<%s>:", list_filename);
-			rewind(stdin);
-			scanf("%c", temp);
-			if ('\n' != temp[0]) {
-				scanf("%s", &temp[1]);
-				while (!isFilenameLegal(temp) || !filenameEndsWith(temp, "tf")) {
-					printf("文件路径不合法。\n请重新输入要保存频率信息的文件名(路径)(%d字符以内且以.tf结尾)：\n", FILENAME_LEN_MAX);
-					scanf("%s", temp);
+			codebook_mode = chooseCodebookMode(false);
+			if (codebook_mode) {
+				//保存为可视化txt文件
+				printf("请输入要保存频率信息的文件名(路径)(%d字符以内且以.txt结尾)：\n", FILENAME_LEN_MAX);
+				printf("<%s>:", list_vi_filename);
+				rewind(stdin);
+				scanf("%c", temp);
+				if ('\n' != temp[0]) {
+					scanf("%s", &temp[1]);
+					while (!isFilenameLegal(temp) || !filenameEndsWith(temp, "txt")) {
+						printf("文件路径不合法。\n请重新输入要保存频率信息的文件名(路径)(%d字符以内且以.txt结尾)：\n", FILENAME_LEN_MAX);
+						scanf("%s", temp);
+					}
+					memcpy(list_vi_filename, temp, FILENAME_LEN_MAX);
 				}
-				memcpy(list_filename, temp, FILENAME_LEN_MAX);
+				save_vi_list(list_head, huffman_head, list_vi_filename);
+				break;
 			}
-
-			save_list(list_head, list_filename);
-			break;
+			else {
+				//保存为二进制tf文件
+				printf("请输入要保存频率信息的文件名(路径)(%d字符以内且以.tf结尾)：\n", FILENAME_LEN_MAX);
+				printf("<%s>:", list_filename);
+				rewind(stdin);
+				scanf("%c", temp);
+				if ('\n' != temp[0]) {
+					scanf("%s", &temp[1]);
+					while (!isFilenameLegal(temp) || !filenameEndsWith(temp, "tf")) {
+						printf("文件路径不合法。\n请重新输入要保存频率信息的文件名(路径)(%d字符以内且以.tf结尾)：\n", FILENAME_LEN_MAX);
+						scanf("%s", temp);
+					}
+					memcpy(list_filename, temp, FILENAME_LEN_MAX);
+				}
+				save_list(list_head, list_filename);
+				break;
+			}
 
 		case 7:  //读取码本信息
 			printf("请输入保存频率信息的文件名(路径)(%d字符以内且以.tf结尾)：\n", FILENAME_LEN_MAX);

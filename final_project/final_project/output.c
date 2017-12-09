@@ -28,7 +28,7 @@ void print_freq(listHead *head) {
 		}
 		else {
 			if ((data->ch[0] <= 31 && data->ch[0] > 0) || 127 == data->ch[0]) {
-				printf("(ASCII:%d)\t", data->ch[0]);
+				printf(" (ASCII:%d)\t", data->ch[0]);
 			}
 			else {
 				if (0 != data->ch[0] || 0 != data->ch[1]) {
@@ -65,7 +65,7 @@ void print_huffman_tree(huffmanNode* head) {
 			printf("\n");
 			continue;
 		}
-		printf("%3d ", p_queue->pNode->val);
+		printf("%4d ", p_queue->pNode->val);
 		if (NULL != p_queue->pNode->lChild && NULL != p_queue->pNode->rChild) {
 			appendQueue(queue_head, p_queue->pNode->lChild);
 			appendQueue(queue_head, p_queue->pNode->rChild);
@@ -208,7 +208,7 @@ void encode_and_save_tf(tfListHead *tf_list_head, char output_filename[], char i
 			ch[1] = '\0';
 		}
 		data = get_tf_node_data(tf_list_head, ch);
-		for (i = 1; i <= data.valid_len; i++) {
+		for (i = 1; i <= data.validLen; i++) {
 			temp_ch = data.code[(i - 1) / 8] & bi_array[i % 8];
 			if (temp_ch) {
 				res_arr[res_len / 8] = res_arr[res_len / 8] | bi_array[(res_len + 1) % 8];
@@ -224,7 +224,7 @@ void encode_and_save_tf(tfListHead *tf_list_head, char output_filename[], char i
 		res_len = res_len % 8;
 	}
 	data = get_tf_node_data(tf_list_head, "\0\0");
-	for (i = 1; i <= data.valid_len; i++) {
+	for (i = 1; i <= data.validLen; i++) {
 		temp_ch = data.code[(i - 1) / 8] & bi_array[i % 8];
 		if (temp_ch) {
 			res_arr[res_len / 8] = res_arr[res_len / 8] | bi_array[(res_len + 1) % 8];
@@ -283,6 +283,55 @@ void save_list(listHead * list_head, char list_filename[])
 		fwrite(&(data->cnt), sizeof(int), 1, fp);
 	}
 	fclose(fp);
+}
+
+void save_vi_list(listHead * list_head, huffmanNode *huffman_head, char list_vi_filename[])
+{
+	FILE *fp;
+	listData *data;
+	char string_number[11];
+	int len;
+	bool code[MAX_CODE_LEN * 8];
+	int i = 0;
+
+	fp = fopen(list_vi_filename, "wb");
+	if (NULL == fp) {
+		printf("打开节点文件失败，请重试");
+		return;
+	}
+
+	fprintf(fp,"字符\t\t频数\t频度\t\t编码位数\t编码\r\n");
+	while (data = foreach_list(list_head)) {
+		len = get_char_code_len(huffman_head, data->ch);
+		code_bi_to_dec(len, code, G_code_array);
+		if (data->ch[0] < 0) {
+			fprintf(fp, "%c%c\t\t", data->ch[0], data->ch[1]);
+		}
+		else {
+			if ((data->ch[0] <= 31 && data->ch[0] >= 0) || 127 == data->ch[0]) {
+				fprintf(fp, " (ASCII:%d)\t", data->ch[0]);
+			}
+			else {
+				if (0 != data->ch[0] || 0 != data->ch[1]) {
+					fprintf(fp, "%c(ASCII:%d)\t", data->ch[0], data->ch[0]);
+				}
+			}
+		}
+		if (0 != data->ch[0] || 0 != data->ch[1]) {
+			fprintf(fp,"%d\t%lf\t", data->cnt, data->freq);
+			fprintf(fp, "%d\t", len);
+			for (i = 0; i < len; i++) {
+				fprintf(fp,"%d", code[i]);
+			}
+			fprintf(fp, "\r\n");
+		}
+		else {
+			fseek(fp, -sizeof("(ASCII:0)\t"), SEEK_CUR);
+			fprintf(fp, "共计%d个不同字符，共计%d个字符\n", list_head->length, list_head->cnt);
+		}
+	}
+	fclose(fp);
+	return;
 }
 
 

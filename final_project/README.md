@@ -88,7 +88,7 @@ bool traverseTag;  //结构体属性
     }
     ```
     
-2. 逗号，后接以空格。
+2. 逗号，+-*/，后接以空格。
 
     ```c  
     int append(linkHead *head, char ch){
