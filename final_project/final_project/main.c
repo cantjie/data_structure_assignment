@@ -125,17 +125,12 @@ int main(int argc, char *argv[]) {
 	bool codebook_mode = false;
 	int func_tag = 1;
 	int exit_tag;
-	char input_filename[FILENAME_LEN_MAX] = "test.txt";
-	char compressed_filename[FILENAME_LEN_MAX] = "compressed.dat";
-	char target_filename[FILENAME_LEN_MAX] = "uncompressed.txt";
+	char input_filename[FILENAME_LEN_MAX] = "source.txt";
+	char compressed_filename[FILENAME_LEN_MAX] = "Encode.dat";
+	char target_filename[FILENAME_LEN_MAX] = "Target.txt";
 	char list_filename[FILENAME_LEN_MAX] = "list.tf";  //term frequency
 	char temp[FILENAME_LEN_MAX] = "test.txt";
 	char list_vi_filename[FILENAME_LEN_MAX] = "Statistic.txt";
-	//FILE *fp;
-	//char filename[70] = "D:\\aa\\aa\\assignment\\final_project\\final_project\\t.t";
-	//scanf("%s", filename);
-	//fp = fopen(filename, "w");
-	//printf("%d", fp);
 
 	while (true) {
 		func_tag = chooseFunction(true);
