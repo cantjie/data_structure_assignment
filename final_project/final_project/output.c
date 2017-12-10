@@ -131,7 +131,7 @@ void encode_and_save(huffmanNode *huffman_head, char output_filename[], char inp
 	FILE *fp_in, *fp_out;
 	char ch[2];
 	int len = 0;
-	char res_arr[MAX_CODE_LEN];
+	char res_arr[MAX_CODE_LEN*2];
 	char temp_ch = 1;
 	int res_len = 0;
 	int i;

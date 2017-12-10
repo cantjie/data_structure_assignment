@@ -115,6 +115,9 @@ bool chooseCodebookMode(bool cls) {
 void printHelp(void) {
 	//TODO
 	printf("这么简单的程序，自己探索不就好啦︿(￣︶￣)︿\n");
+	printf("For more, email   : cantjie@cantjie.com\n");
+	printf("fork me on github : github.com/cantjie (2017-12-10之前为private库)\n");
+	return;
 }
 
 int main(int argc, char *argv[]) {
